@@ -1,0 +1,25 @@
+node_modules/
+dist/
+# 本地环境变量文件不进入版本控制
+.env
+.env.*
+.env.example
+!*.env.ts
+coverage/
+
+# 非项目提交内容：默认不纳入 git
+docs/
+tests/
+.data/
+AGENTS.md
+示例/
+temp/
+tmp/
+scratch/
+quicksort.py
+
+# 常见临时文件
+*.tmp
+*.temp
+*.bak
+*.swp

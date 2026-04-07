@@ -1,0 +1,26 @@
+{
+  "name": "liteagent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A lightweight CLI AI coding assistant.",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "test": "vitest run --pool=threads",
+    "test:watch": "vitest --pool=threads",
+    "check": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.1",
+    "openai": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.9"
+  }
+}
