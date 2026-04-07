@@ -7,6 +7,8 @@ export type RuntimeConfig = {
   model: string;
   commandTimeoutMs: number;
   maxCommandOutput: number;
+  enableMcp: boolean;
+  enableSkills: boolean;
 };
 
 function readOptionalString(value: string | undefined): string | undefined {
@@ -29,6 +31,24 @@ function readNumber(value: string | undefined, fallback: number): number {
   return Number(normalizedValue);
 }
 
+function readBoolean(value: string | undefined, fallback = false): boolean {
+  const normalizedValue = value?.trim().toLowerCase();
+
+  if (!normalizedValue) {
+    return fallback;
+  }
+
+  if (["1", "true", "yes", "on"].includes(normalizedValue)) {
+    return true;
+  }
+
+  if (["0", "false", "no", "off"].includes(normalizedValue)) {
+    return false;
+  }
+
+  return fallback;
+}
+
 export function loadConfig(env: EnvInput): RuntimeConfig {
   return {
     provider: "openai",
@@ -37,5 +57,7 @@ export function loadConfig(env: EnvInput): RuntimeConfig {
     model: readString(env.OPENAI_MODEL, "gpt-5.4"),
     commandTimeoutMs: readNumber(env.COMMAND_TIMEOUT_MS, 15000),
     maxCommandOutput: readNumber(env.MAX_COMMAND_OUTPUT, 12000),
+    enableMcp: readBoolean(env.ENABLE_MCP),
+    enableSkills: readBoolean(env.ENABLE_SKILLS),
   };
 }

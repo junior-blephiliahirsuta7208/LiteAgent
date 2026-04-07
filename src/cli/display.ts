@@ -1,4 +1,9 @@
 import type { ConfigIssue } from "../config/validation";
+import {
+  isPatchFileToolResult,
+  isRunCommandToolResult,
+  type ToolResult,
+} from "../tools/tool-types";
 
 export type WelcomeMessageInput = {
   cwd: string;
@@ -22,8 +27,6 @@ export type PatchFileApprovalPromptInput = {
   path: string;
   diff: string;
 };
-
-export type ToolDisplayResult = Record<string, unknown>;
 
 type DiffStats = {
   additions: number;
@@ -108,41 +111,33 @@ export function formatPatchFileApprovalPrompt(
   ].join("\n");
 }
 
-export function formatToolResultSummary(result: ToolDisplayResult): string {
-  const action = readString(result.action);
-  const status = readString(result.status);
-
-  if (action === "run_command") {
-    return formatRunCommandResult(result, status);
+export function formatToolResultSummary(result: ToolResult): string {
+  if (isRunCommandToolResult(result)) {
+    return formatRunCommandResult(result);
   }
 
-  if (action === "patch_file") {
-    return formatPatchFileResult(result, status);
+  if (isPatchFileToolResult(result)) {
+    return formatPatchFileResult(result);
   }
 
   return readString(result.message) || "工具已返回结果。";
 }
 
-function formatRunCommandResult(result: ToolDisplayResult, status: string): string {
-  const command = readString(result.command);
-
-  if (status === "completed") {
+function formatRunCommandResult(result: Extract<ToolResult, { action: "run_command" }>): string {
+  if (result.status === "completed") {
     const lines = ["命令已执行完成。"];
 
-    if (command) {
-      lines.push(`命令：${command}`);
+    if (result.command) {
+      lines.push(`命令：${result.command}`);
     }
 
-    const timedOut = result.timedOut === true;
-    const exitCode = typeof result.exitCode === "number" ? result.exitCode : null;
-
-    if (timedOut) {
+    if (result.timedOut) {
       lines.push("执行过程中超时，系统已主动停止。");
-    } else if (exitCode !== null) {
-      lines.push(`退出码 ${exitCode}`);
+    } else if (typeof result.exitCode === "number") {
+      lines.push(`退出码 ${result.exitCode}`);
     }
 
-    const output = pickCommandOutput(result);
+    const output = pickCommandOutput(result.stdout, result.stderr);
 
     if (output) {
       lines.push(`输出摘要：${output}`);
@@ -153,50 +148,40 @@ function formatRunCommandResult(result: ToolDisplayResult, status: string): stri
     return lines.join("\n");
   }
 
-  if (status === "rejected") {
-    if (readString(result.reason) === "approval_required") {
-      return "这条命令需要先确认，但当前还无法发起确认，所以先跳过了。";
-    }
-
-    return "这次没有执行命令，已按你的确认结果取消。";
+  if (result.reason === "approval_required") {
+    return "这条命令需要先确认，但当前还无法发起确认，所以先跳过了。";
   }
 
-  return readString(result.message) || "命令处理已结束。";
+  return "这次没有执行命令，已按你的确认结果取消。";
 }
 
-function formatPatchFileResult(result: ToolDisplayResult, status: string): string {
-  const path = readString(result.path);
-  const diff = readString(result.diff);
-  const stats = getDiffStats(diff);
+function formatPatchFileResult(result: Extract<ToolResult, { action: "patch_file" }>): string {
+  const stats = getDiffStats(result.diff);
 
-  if (status === "completed") {
+  if (result.status === "completed") {
     return [
-      `文件已更新：${path || "未提供路径"}`,
+      `文件已更新：${result.path || "未提供路径"}`,
       `变更摘要：新增 ${stats.additions} 行，删除 ${stats.deletions} 行。`,
     ].join("\n");
   }
 
-  if (status === "skipped") {
-    return `没有检测到文件变化，已跳过：${path || "未提供路径"}`;
+  if (result.status === "skipped") {
+    return `没有检测到文件变化，已跳过：${result.path || "未提供路径"}`;
   }
 
-  if (status === "rejected") {
-    return `这次没有改动文件，已取消：${path || "未提供路径"}`;
-  }
-
-  return readString(result.message) || "文件处理已结束。";
+  return `这次没有改动文件，已取消：${result.path || "未提供路径"}`;
 }
 
-function pickCommandOutput(result: ToolDisplayResult): string {
-  const stdout = normalizeInlineText(readString(result.stdout));
-  const stderr = normalizeInlineText(readString(result.stderr));
+function pickCommandOutput(stdout: string, stderr: string): string {
+  const normalizedStdout = normalizeInlineText(stdout);
+  const normalizedStderr = normalizeInlineText(stderr);
 
-  if (stdout) {
-    return stdout;
+  if (normalizedStdout) {
+    return normalizedStdout;
   }
 
-  if (stderr) {
-    return stderr;
+  if (normalizedStderr) {
+    return normalizedStderr;
   }
 
   return "";

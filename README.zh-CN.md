@@ -34,6 +34,8 @@ npm run dev
 OPENAI_API_KEY="your-api-key"
 OPENAI_MODEL="gpt-5.4"
 OPENAI_BASE_URL=""
+ENABLE_MCP="false"
+ENABLE_SKILLS="false"
 ```
 
 启动后先输入：
@@ -72,6 +74,8 @@ LiteAgent 刻意保持一个较小的运行时边界：
 | `OPENAI_BASE_URL` | 否 | 空 | OpenAI 兼容接口地址 |
 | `COMMAND_TIMEOUT_MS` | 否 | `15000` | `run_command` 的超时时间，单位毫秒 |
 | `MAX_COMMAND_OUTPUT` | 否 | `12000` | `run_command` 保留的最大输出长度 |
+| `ENABLE_MCP` | 否 | `false` | 启用内置 MCP 运行时扩展提示 |
+| `ENABLE_SKILLS` | 否 | `false` | 启用内置 Skills 运行时扩展提示 |
 
 如果你更想临时在当前终端里设置变量，继续手动导出这些环境变量也可以。
 

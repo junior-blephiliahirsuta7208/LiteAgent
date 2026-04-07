@@ -19,18 +19,32 @@ import { validateConfig } from "./config/validation";
 import { runAgentTurn } from "./core/agent-loop";
 import { createSessionManager } from "./core/session-manager";
 import { createSession } from "./core/session";
+import { buildExtensionSystemPrompt, createRuntimeExtensionsState } from "./extensions/base";
+import { createMcpExtension } from "./extensions/mcp";
+import { createSkillsExtension } from "./extensions/skills";
 import { createOpenAIProvider } from "./providers/openai";
 import { createSessionStore } from "./storage/session-store";
 import { createDefaultToolRegistry } from "./tools/default-tools";
 
-export function createApp() {
-  const config = loadConfig(process.env);
+export function createApp(env: Record<string, string | undefined> = process.env) {
+  const config = loadConfig(env);
+  const extensions = createRuntimeExtensionsState([
+    createMcpExtension(config.enableMcp),
+    createSkillsExtension(config.enableSkills),
+  ]);
+  const extensionPrompt = buildExtensionSystemPrompt(extensions.all);
+  const baseSystemPrompt =
+    "You are LiteAgent, a concise coding assistant. Use tools when necessary, ask concise clarifying questions, and never claim to have edited files unless a patch was approved and applied.";
 
   return {
     name: "LiteAgent",
     version: "0.1.0",
     config,
     validation: validateConfig(config),
+    extensions,
+    systemPrompt: extensionPrompt
+      ? `${baseSystemPrompt}\n\n${extensionPrompt}`
+      : baseSystemPrompt,
     repl: createReplState(),
   };
 }
@@ -178,8 +192,7 @@ export async function runCli(): Promise<number> {
           registry,
           session,
           userInput: trimmedInput,
-          systemPrompt:
-            "You are LiteAgent, a concise coding assistant. Use tools when necessary, ask concise clarifying questions, and never claim to have edited files unless a patch was approved and applied.",
+          systemPrompt: app.systemPrompt,
           onTextDelta(text) {
             output.write(text);
             streamedOutput = true;

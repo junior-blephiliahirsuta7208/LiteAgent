@@ -4,7 +4,7 @@ import {
   createCompletedToolResult,
   createRejectedToolResult,
 } from "./tool-result-helpers";
-import type { ToolDefinition } from "./tool-types";
+import type { RunCommandToolResult, ToolDefinition } from "./tool-types";
 
 type RunCommandToolOptions = {
   cwd: string;
@@ -13,7 +13,7 @@ type RunCommandToolOptions = {
   confirm?: (command: string) => Promise<boolean>;
 };
 
-export function createRunCommandTool(options: RunCommandToolOptions): ToolDefinition {
+export function createRunCommandTool(options: RunCommandToolOptions): ToolDefinition<RunCommandToolResult> {
   return {
     name: "run_command",
     description: "在工作区执行命令",
@@ -40,8 +40,8 @@ export function createRunCommandTool(options: RunCommandToolOptions): ToolDefini
             "命令需要批准，但当前环境无法发起审批，已跳过。",
             {
               command: normalizedCommand,
-              approved: false,
-              skipped: true,
+              approved: false as const,
+              skipped: true as const,
             },
           );
         }
@@ -55,8 +55,8 @@ export function createRunCommandTool(options: RunCommandToolOptions): ToolDefini
             "命令执行未获批准，已跳过。",
             {
               command: normalizedCommand,
-              approved: false,
-              skipped: true,
+              approved: false as const,
+              skipped: true as const,
             },
           );
         }

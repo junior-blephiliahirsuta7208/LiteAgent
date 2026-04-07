@@ -34,6 +34,8 @@ Create a local `.env` file in the project root:
 OPENAI_API_KEY="your-api-key"
 OPENAI_MODEL="gpt-5.4"
 OPENAI_BASE_URL=""
+ENABLE_MCP="false"
+ENABLE_SKILLS="false"
 ```
 
 Then run:
@@ -72,6 +74,8 @@ The current runtime loads `.env` from the project root at startup. If the same v
 | `OPENAI_BASE_URL` | No | Empty | Base URL for an OpenAI-compatible endpoint |
 | `COMMAND_TIMEOUT_MS` | No | `15000` | Timeout for `run_command`, in milliseconds |
 | `MAX_COMMAND_OUTPUT` | No | `12000` | Maximum preserved command output length |
+| `ENABLE_MCP` | No | `false` | Enable the built-in MCP runtime extension prompt |
+| `ENABLE_SKILLS` | No | `false` | Enable the built-in skills runtime extension prompt |
 
 If you prefer temporary shell-only configuration, exporting the same variables manually still works.
 

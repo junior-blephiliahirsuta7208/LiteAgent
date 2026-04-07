@@ -1,19 +1,27 @@
 type ToolAction = "run_command" | "patch_file";
 type ToolStatus = "completed" | "skipped" | "rejected";
 
-type ToolResultBase = {
-  action: ToolAction;
-  status: ToolStatus;
-  reason: string;
+type ToolResultBase<
+  TAction extends ToolAction,
+  TStatus extends ToolStatus,
+  TReason extends string,
+> = {
+  action: TAction;
+  status: TStatus;
+  reason: TReason;
   message: string;
 };
 
-export function createCompletedToolResult<T extends Record<string, unknown>>(
-  action: ToolAction,
-  reason: string,
+export function createCompletedToolResult<
+  TAction extends ToolAction,
+  TReason extends string,
+  TExtra extends Record<string, unknown>,
+>(
+  action: TAction,
+  reason: TReason,
   message: string,
-  extra: T,
-): ToolResultBase & T {
+  extra: TExtra,
+): ToolResultBase<TAction, "completed", TReason> & TExtra {
   return {
     action,
     status: "completed",
@@ -23,12 +31,16 @@ export function createCompletedToolResult<T extends Record<string, unknown>>(
   };
 }
 
-export function createSkippedToolResult<T extends Record<string, unknown>>(
-  action: ToolAction,
-  reason: string,
+export function createSkippedToolResult<
+  TAction extends ToolAction,
+  TReason extends string,
+  TExtra extends Record<string, unknown>,
+>(
+  action: TAction,
+  reason: TReason,
   message: string,
-  extra: T,
-): ToolResultBase & T {
+  extra: TExtra,
+): ToolResultBase<TAction, "skipped", TReason> & TExtra {
   return {
     action,
     status: "skipped",
@@ -38,12 +50,16 @@ export function createSkippedToolResult<T extends Record<string, unknown>>(
   };
 }
 
-export function createRejectedToolResult<T extends Record<string, unknown>>(
-  action: ToolAction,
-  reason: string,
+export function createRejectedToolResult<
+  TAction extends ToolAction,
+  TReason extends string,
+  TExtra extends Record<string, unknown>,
+>(
+  action: TAction,
+  reason: TReason,
   message: string,
-  extra: T,
-): ToolResultBase & T {
+  extra: TExtra,
+): ToolResultBase<TAction, "rejected", TReason> & TExtra {
   return {
     action,
     status: "rejected",

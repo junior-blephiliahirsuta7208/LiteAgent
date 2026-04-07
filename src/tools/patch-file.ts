@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 
-import type { ToolDefinition } from "./tool-types";
+import type { PatchFileToolResult, ToolDefinition } from "./tool-types";
 import {
   createCompletedToolResult,
   createRejectedToolResult,
@@ -14,7 +14,7 @@ type PatchFileToolOptions = {
   confirm?: (input: { path: string; diff: string }) => Promise<boolean>;
 };
 
-export function createPatchFileTool(options: PatchFileToolOptions): ToolDefinition {
+export function createPatchFileTool(options: PatchFileToolOptions): ToolDefinition<PatchFileToolResult> {
   return {
     name: "patch_file",
     description: "生成文件 diff 并在批准后写入",
@@ -51,6 +51,20 @@ export function createPatchFileTool(options: PatchFileToolOptions): ToolDefiniti
       const changed = before !== after;
 
       if (changed) {
+        if (!options.confirm) {
+          return createRejectedToolResult(
+            "patch_file",
+            "approval_required",
+            "文件变更需要批准，但当前环境无法发起审批，已跳过。",
+            {
+              path: resolvedPath,
+              diff,
+              applied: false as const,
+              skipped: true as const,
+            },
+          );
+        }
+
         const approved = await options.confirm?.({
           path: input.path ?? resolvedPath,
           diff,
@@ -64,8 +78,8 @@ export function createPatchFileTool(options: PatchFileToolOptions): ToolDefiniti
             {
               path: resolvedPath,
               diff,
-              applied: false,
-              skipped: true,
+              applied: false as const,
+              skipped: true as const,
             },
           );
         }
@@ -77,15 +91,15 @@ export function createPatchFileTool(options: PatchFileToolOptions): ToolDefiniti
         return createCompletedToolResult("patch_file", "applied", "文件变更已写入。", {
           path: resolvedPath,
           diff,
-          applied: true,
+          applied: true as const,
         });
       }
 
       return createSkippedToolResult("patch_file", "no_changes", "文件内容无变化，已跳过写入。", {
         path: resolvedPath,
         diff,
-        applied: false,
-        skipped: true,
+        applied: false as const,
+        skipped: true as const,
       });
     },
   };
