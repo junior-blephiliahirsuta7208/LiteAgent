@@ -11,8 +11,10 @@ import {
   formatWelcomeMessage,
 } from "./cli/display";
 import { readPrompt } from "./cli/io";
+import { runMcpCommand } from "./cli/mcp-actions";
 import { createReplState, handleSlashCommand } from "./cli/repl";
 import { applySlashAction } from "./cli/session-actions";
+import { runSkillsCommand } from "./cli/skills-actions";
 import { loadConfig } from "./config/config";
 import { bootstrapEnv, type BootstrapEnvResult } from "./config/env";
 import { resolveConfigPaths } from "./config/path-resolution";
@@ -87,13 +89,30 @@ async function promptAsk(rl: readline.Interface, question: string): Promise<stri
   return (await readPrompt(rl, `${question}\n> `)) ?? "";
 }
 
-export async function runCli(): Promise<number> {
+export async function runCli(argv = process.argv.slice(2)): Promise<number> {
   const cwd = process.cwd();
   const envResult = bootstrapEnv({ cwd });
 
   if (envResult.error) {
     output.write(`读取 .env 失败：${envResult.error.message}\n`);
     return 1;
+  }
+
+  if (argv[0] === "skills") {
+    const result = await runSkillsCommand(argv.slice(1), {
+      cwd,
+    });
+    output.write(`${result.output}\n`);
+    return result.exitCode;
+  }
+
+  if (argv[0] === "mcp") {
+    const result = await runMcpCommand(argv.slice(1), {
+      cwd,
+      homeDir: envResult.paths.homeDir,
+    });
+    output.write(`${result.output}\n`);
+    return result.exitCode;
   }
 
   const app = createApp(envResult.env, cwd, envResult);
