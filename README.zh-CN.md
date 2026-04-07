@@ -79,6 +79,46 @@ LiteAgent 刻意保持一个较小的运行时边界：
 
 如果你更想临时在当前终端里设置变量，继续手动导出这些环境变量也可以。
 
+## 扩展导入
+
+LiteAgent 现在支持对 `Skills` 和 `MCP` 配置做轻量级运行时发现。
+
+`Skills` 的目录约定是：
+
+```text
+skills/
+  your-skill/
+    SKILL.md
+```
+
+只有 `skills/<name>/SKILL.md` 会被当作技能入口。目录里的其他 markdown 文件可以继续作为参考资料存在，不会被当成独立 skill 注册。
+
+`MCP` 配置会从项目根目录下这两个文件里择一读取：
+
+```text
+liteagent.mcp.json
+.mcp.json
+```
+
+最小示例：
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    }
+  }
+}
+```
+
+当前这一步能做的是：
+
+- `ENABLE_SKILLS=true` 时，LiteAgent 会发现 `skills/<name>/SKILL.md` 并把它们注入运行时系统提示
+- `ENABLE_MCP=true` 时，LiteAgent 会读取 `liteagent.mcp.json` 或 `.mcp.json` 中的 MCP 服务元数据并注入运行时系统提示
+- 目前这还是运行时发现，不是完整的 MCP 工具注册系统
+
 ## 中转站兼容性
 
 你可以通过 `OPENAI_BASE_URL` 把 LiteAgent 指向 OpenAI 兼容中转站。
@@ -143,7 +183,7 @@ LiteAgent 刻意保持一个较小的运行时边界：
 
 - 目前只实现了 `openai` 提供方接入
 - 当前使用 Chat Completions，而不是 Responses API
-- `skills` 和 `MCP` 还只是扩展占位
+- `skills` 和 `MCP` 已支持运行时发现，但还不是完整的外部插件 / 工具注册系统
 - 搜索能力较基础，更适合小到中型仓库
 - 还没有打包成独立可执行文件
 

@@ -1,10 +1,18 @@
 export type RuntimeExtensionName = "mcp" | "skills";
 
+export type RuntimeExtensionItem = {
+  name: string;
+  source?: string;
+  entryPath?: string;
+  transport?: string;
+};
+
 export type RuntimeExtension = {
   name: RuntimeExtensionName;
   enabled: boolean;
   description: string;
   systemPrompt?: string;
+  items?: RuntimeExtensionItem[];
 };
 
 export type RuntimeExtensionsState = {

@@ -79,6 +79,46 @@ The current runtime loads `.env` from the project root at startup. If the same v
 
 If you prefer temporary shell-only configuration, exporting the same variables manually still works.
 
+## Extension Import
+
+LiteAgent now supports lightweight runtime discovery for both skills and MCP configuration.
+
+Skills are discovered from:
+
+```text
+skills/
+  your-skill/
+    SKILL.md
+```
+
+Only `skills/<name>/SKILL.md` is treated as a skill entry. Other markdown files under that directory can stay as references and are not registered as separate skills.
+
+MCP configuration is discovered from either of these files in the project root:
+
+```text
+liteagent.mcp.json
+.mcp.json
+```
+
+A minimal example:
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    }
+  }
+}
+```
+
+Current scope:
+
+- `ENABLE_SKILLS=true` makes LiteAgent discover `skills/<name>/SKILL.md` entries and inject them into the runtime system prompt
+- `ENABLE_MCP=true` makes LiteAgent read MCP server metadata from `liteagent.mcp.json` or `.mcp.json` and inject it into the runtime system prompt
+- this is runtime discovery, not full MCP tool registration yet
+
 ## Relay Compatibility
 
 You can point LiteAgent to an OpenAI-compatible relay by setting `OPENAI_BASE_URL`.
@@ -143,7 +183,7 @@ This repository is still an MVP:
 
 - only the `openai` provider is implemented
 - Chat Completions is used instead of the Responses API
-- `skills` and `MCP` are extension stubs only
+- `skills` and `MCP` are now runtime-discovered extensions, but they are not full external plugin/tool registration systems yet
 - search is simple and better suited to small or medium repositories
 - the project is not packaged as a standalone binary yet
 

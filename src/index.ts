@@ -26,11 +26,14 @@ import { createOpenAIProvider } from "./providers/openai";
 import { createSessionStore } from "./storage/session-store";
 import { createDefaultToolRegistry } from "./tools/default-tools";
 
-export function createApp(env: Record<string, string | undefined> = process.env) {
+export function createApp(
+  env: Record<string, string | undefined> = process.env,
+  cwd = process.cwd(),
+) {
   const config = loadConfig(env);
   const extensions = createRuntimeExtensionsState([
-    createMcpExtension(config.enableMcp),
-    createSkillsExtension(config.enableSkills),
+    createMcpExtension(config.enableMcp, cwd),
+    createSkillsExtension(config.enableSkills, cwd),
   ]);
   const extensionPrompt = buildExtensionSystemPrompt(extensions.all);
   const baseSystemPrompt =
@@ -86,14 +89,14 @@ export async function runCli(): Promise<number> {
     return 1;
   }
 
-  const app = createApp();
+  const cwd = process.cwd();
+  const app = createApp(process.env, cwd);
 
   if (!app.validation.ok) {
     output.write(`${formatConfigIssueReport(app.validation.issues)}\n`);
     return 1;
   }
 
-  const cwd = process.cwd();
   const rl = readline.createInterface({ input, output });
   const provider = createOpenAIProvider({
     apiKey: app.config.apiKey,
