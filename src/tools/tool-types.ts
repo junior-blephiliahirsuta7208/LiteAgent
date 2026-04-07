@@ -50,14 +50,36 @@ export type PatchFileToolResult =
       skipped: true;
     });
 
-export type ToolResult = RunCommandToolResult | PatchFileToolResult | GenericToolResult;
+export type LoadSkillToolResult =
+  | {
+      found: true;
+      skillName: string;
+      entryPath?: string;
+      description?: string;
+      content: string;
+      message?: string;
+      availableSkills?: undefined;
+      errors?: undefined;
+    }
+  | {
+      found: false;
+      skillName: string;
+      entryPath?: undefined;
+      description?: undefined;
+      content?: undefined;
+      message: string;
+      availableSkills: string[];
+      errors: string[];
+    };
+
+export type ToolResult = RunCommandToolResult | PatchFileToolResult | LoadSkillToolResult | GenericToolResult;
 
 export function isRunCommandToolResult(result: ToolResult): result is RunCommandToolResult {
-  return result.action === "run_command";
+  return "action" in result && result.action === "run_command";
 }
 
 export function isPatchFileToolResult(result: ToolResult): result is PatchFileToolResult {
-  return result.action === "patch_file";
+  return "action" in result && result.action === "patch_file";
 }
 
 export type ToolDefinition<TResult extends ToolResult = ToolResult> = {

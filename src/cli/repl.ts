@@ -24,6 +24,9 @@ export type SlashCommandAction =
     }
   | {
       type: "list-sessions";
+    }
+  | {
+      type: "list-skills";
     };
 
 export type SlashCommandResult = {
@@ -58,6 +61,7 @@ export function handleSlashCommand(
           "/status - 查看当前状态",
           "/model - 查看当前模型",
           "/sessions - 查看本地历史会话列表",
+          "/skills - 查看当前已发现的 skills",
           "/resume [sessionId|序号] - 恢复最近会话、指定会话 ID 或列表序号",
           "/new - 开始新会话",
           "/exit - 退出程序",
@@ -150,6 +154,23 @@ export function handleSlashCommand(
         output: "已识别查看本地历史会话列表请求。",
         action: {
           type: "list-sessions",
+        },
+      };
+    case "/skills":
+      if (args.length > 0) {
+        return {
+          handled: true,
+          shouldExit: false,
+          output: "用法: /skills",
+        };
+      }
+
+      return {
+        handled: true,
+        shouldExit: false,
+        output: "已识别查看当前已发现 skills 请求。",
+        action: {
+          type: "list-skills",
         },
       };
     case "/new":

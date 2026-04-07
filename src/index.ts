@@ -162,6 +162,14 @@ export async function runCli(): Promise<number> {
             const actionResult = await applySlashAction(slashResult.action, {
               currentSession: session,
               listSessions: async () => await sessionManager.listSessions(),
+              listSkills: async () => {
+                const skillsExtension = app.extensions.all.find((extension) => extension.name === "skills");
+
+                return {
+                  enabled: skillsExtension?.enabled === true,
+                  items: skillsExtension?.items ?? [],
+                };
+              },
               loadLatestSession: async () => await sessionManager.loadLatestSession(),
               loadSessionById: async (sessionId) => await sessionManager.loadSessionById(sessionId),
               resetSession: (currentSession) => sessionManager.resetSession(currentSession),

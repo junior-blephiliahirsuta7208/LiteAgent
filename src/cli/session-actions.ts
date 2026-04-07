@@ -1,4 +1,5 @@
 import type { ResetSessionResult } from "../core/session-manager";
+import type { RuntimeExtensionItem } from "../extensions/base";
 import type { SessionSummary } from "../storage/session-store";
 import type { SessionRecord } from "../types";
 import type { SlashCommandAction } from "./repl";
@@ -6,6 +7,10 @@ import type { SlashCommandAction } from "./repl";
 type SessionActionHandlers = {
   currentSession: SessionRecord;
   listSessions: () => Promise<SessionSummary[]>;
+  listSkills: () => Promise<{
+    enabled: boolean;
+    items: RuntimeExtensionItem[];
+  }>;
   loadLatestSession: () => Promise<SessionRecord | null>;
   loadSessionById: (sessionId: string) => Promise<SessionRecord | null>;
   resetSession: (currentSession?: SessionRecord) => ResetSessionResult;
@@ -34,6 +39,15 @@ export async function applySlashAction(
     return {
       kind: "message",
       output: formatSessionList(sessions),
+    };
+  }
+
+  if (action.type === "list-skills") {
+    const skills = await handlers.listSkills();
+
+    return {
+      kind: "message",
+      output: formatSkillsList(skills),
     };
   }
 
@@ -115,9 +129,39 @@ function formatSessionList(sessions: SessionSummary[]): string {
 
   for (const [index, session] of sessions.entries()) {
     lines.push(`${index + 1}. ${session.id}`);
-    lines.push(
-      `   ${session.messageCount} 条消息 | 最近活动 ${formatTimestamp(session.lastActivityAt)}`,
-    );
+    lines.push(`   ${session.messageCount} 条消息 | 最近活动 ${formatTimestamp(session.lastActivityAt)}`);
+  }
+
+  return lines.join("\n");
+}
+
+function formatSkillsList(input: {
+  enabled: boolean;
+  items: RuntimeExtensionItem[];
+}): string {
+  if (input.items.length === 0) {
+    return input.enabled
+      ? "暂无已发现的 skills。"
+      : "暂无已发现的 skills，或 Skills 扩展尚未启用。";
+  }
+
+  const lines = ["当前已发现的 skills", ""];
+
+  for (const [index, skill] of input.items.entries()) {
+    lines.push(`${index + 1}. ${skill.name}`);
+
+    if (skill.description) {
+      lines.push(`   ${skill.description}`);
+    }
+
+    if (skill.entryPath) {
+      lines.push(`   ${skill.entryPath}`);
+    }
+  }
+
+  if (!input.enabled) {
+    lines.push("");
+    lines.push("当前 Skills 扩展未启用，这些 skill 还不会自动参与运行时提示。");
   }
 
   return lines.join("\n");

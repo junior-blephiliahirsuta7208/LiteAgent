@@ -2,6 +2,7 @@ import { createToolRegistry } from "./registry";
 import { createAskUserTool } from "./ask-user";
 import { createGrepFilesTool } from "./grep-files";
 import { createListFilesTool } from "./list-files";
+import { createLoadSkillTool } from "./load-skill";
 import { createPatchFileTool } from "./patch-file";
 import { createReadFileTool } from "./read-file";
 import { createRunCommandTool } from "./run-command";
@@ -20,6 +21,7 @@ export function createDefaultToolRegistry(options: DefaultToolRegistryOptions) {
   registry.register(createListFilesTool(options.cwd));
   registry.register(createGrepFilesTool(options.cwd));
   registry.register(createReadFileTool(options.cwd));
+  registry.register(createLoadSkillTool(options.cwd));
   registry.register(
     createRunCommandTool({
       cwd: options.cwd,
