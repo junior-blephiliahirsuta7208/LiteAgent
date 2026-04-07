@@ -1,8 +1,13 @@
 # LiteAgent
 
+[![CI](https://github.com/abilatte/LiteAgent/actions/workflows/ci.yml/badge.svg)](https://github.com/abilatte/LiteAgent/actions/workflows/ci.yml)
+[![Node.js >= 20](https://img.shields.io/badge/node-%3E%3D20-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/language-TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](./LICENSE)
+
 LiteAgent is a lightweight CLI AI coding assistant for local development workflows. For Chinese documentation, see [README.zh-CN.md](./README.zh-CN.md).
 
-## Overview
+## What It Does
 
 - chat with an OpenAI-compatible model in the terminal
 - inspect files inside the current workspace
@@ -11,20 +16,19 @@ LiteAgent is a lightweight CLI AI coding assistant for local development workflo
 - preview diffs before writing files
 - save sessions locally and resume them later
 
-## Quick Start
+## 30-Second Start
 
 Requirements:
 
 - Node.js `>= 20`
 - npm
 
-Install dependencies:
-
 ```bash
 npm install
+npm run dev
 ```
 
-Create a local `.env` file in the project root, then fill in the required values:
+Create a local `.env` file in the project root:
 
 ```env
 OPENAI_API_KEY="your-api-key"
@@ -32,13 +36,30 @@ OPENAI_MODEL="gpt-4.1-mini"
 OPENAI_BASE_URL=""
 ```
 
-Start the CLI:
+Then run:
 
 ```bash
-npm run dev
+/help
 ```
 
-Then use `/help` to see the available commands.
+## Architecture
+
+LiteAgent keeps the runtime intentionally small:
+
+- [src/index.ts](./src/index.ts) boots the CLI, configuration, session store, provider, and tool registry.
+- [src/core/agent-loop.ts](./src/core/agent-loop.ts) runs the assistant turn loop and routes tool calls.
+- [src/tools/default-tools.ts](./src/tools/default-tools.ts) wires the default workspace tools into the runtime.
+
+This layout keeps the MVP readable while leaving clear seams for more tools, providers, and extensions.
+
+## Quick Start
+
+If you want the full setup flow:
+
+1. install dependencies
+2. create a local `.env` file in the project root
+3. run `npm run dev`
+4. use `/help` to inspect the available commands
 
 ## Configuration
 

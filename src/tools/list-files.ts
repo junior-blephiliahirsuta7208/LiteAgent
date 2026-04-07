@@ -7,12 +7,27 @@ export function createListFilesTool(cwd: string): ToolDefinition {
     description: "列出工作区中的文件",
     inputSchema: {
       type: "object",
-      properties: {},
+      properties: {
+        directory: {
+          type: "string",
+        },
+        limit: {
+          type: "number",
+        },
+      },
       additionalProperties: false,
     },
-    async run() {
+    async run(args) {
+      const input =
+        typeof args === "object" && args !== null
+          ? (args as { directory?: string; limit?: number })
+          : {};
+
       return {
-        files: await listWorkspaceFiles(cwd),
+        files: await listWorkspaceFiles(cwd, {
+          directory: input.directory,
+          limit: input.limit,
+        }),
       };
     },
   };

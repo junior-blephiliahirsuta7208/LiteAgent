@@ -11,14 +11,26 @@ export function createReadFileTool(cwd: string): ToolDefinition {
         path: {
           type: "string",
         },
+        startLine: {
+          type: "number",
+        },
+        endLine: {
+          type: "number",
+        },
       },
       required: ["path"],
       additionalProperties: false,
     },
     async run(args) {
-      const targetPath = typeof args === "object" && args !== null ? (args as { path?: string }).path : undefined;
+      const input =
+        typeof args === "object" && args !== null
+          ? (args as { path?: string; startLine?: number; endLine?: number })
+          : {};
 
-      return await readWorkspaceFile(cwd, targetPath ?? "");
+      return await readWorkspaceFile(cwd, input.path ?? "", {
+        startLine: input.startLine,
+        endLine: input.endLine,
+      });
     },
   };
 }
